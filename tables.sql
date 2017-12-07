@@ -3,16 +3,31 @@ use NewStarter;
 create user if not exists 'newStarterAdmin'@'localhost' identified by 'password';
 grant all on NewStarter.* to 'newStarterAdmin'@'localhost';
 
-drop table if exists Manager;
-create table Manager (
+drop table if exists User;
+create table User (
   id int not null auto_increment PRIMARY KEY,
   firstname varchar(25) not null,
   surname varchar(50) not null,
   dateStarted datetime not null,
   email varchar(100) not null,
-  pword varchar(60) not null
+  pword varchar(60) not null,
+  isManager boolean default 0
 );
 
+drop table if exists Task;
+create table Task (
+  id int not null auto_increment PRIMARY KEY,
+  title varchar(25) not null,
+  body varchar(300) not null,
+  progress varchar(25) not null
+);
+
+drop table if exists User_Task;
+create table User_Task (
+  id int not null auto_increment PRIMARY KEY,
+  userId int not null,
+  taskId int not null
+);
 -- insert into BonusPlayer(name, teamID)
 -- values
 --   ('Sidney Crosby', 7),

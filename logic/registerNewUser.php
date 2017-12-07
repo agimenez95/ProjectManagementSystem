@@ -5,9 +5,9 @@ $pword2 = $_POST['pword2'];
 passwordCheck($_POST['email'], $pword, $pword2, $_POST);
 
 function passwordCheck($email, $pword, $pword2, $post){
-  $custmanager = new CustomerManager(getDB());
-  $customer = $custmanager->byEmail($email);
-  if ($customer){
+  $usermanager = new UserManager(getDB());
+  $user = $usermanager->byEmail($email);
+  if ($user){
     $_SESSION['userExists'] = 1;
     populateSession($post);
     if ($pword !== $pword2) {
@@ -23,11 +23,20 @@ function passwordCheck($email, $pword, $pword2, $post){
       header('Location: ../view/registration.php');
     }
     else {
-      $customer = new Customer();
-      $customer->fromArray($post);
-      $customer->setPword(password_hash($pword, PASSWORD_DEFAULT));
-      $custmanager->save($customer);
+      $user = new User();
+      $user->fromArray($post);
+      $user->setPword(password_hash($pword, PASSWORD_DEFAULT));
+      if ($usermanager->isItTheFirst() == null) {
+        $usermanager->saveFirst($user);
+        $_SESSION['login'] = 2;
+      }
+      else {
+        $usermanager->save($user);
+        $_SESSION['login'] = 1;
+      }
+      $_SESSION["userId"] = $user->getID();
       $_SESSION['registrationComplete'] = 1;
+      $_SESSION['page'] = 1;
       header('Location: ../view/index.php');
     }
   }

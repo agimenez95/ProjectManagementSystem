@@ -1,6 +1,13 @@
 <form class="" action="../logic/loginverification.php" method="post">
-  Email: <input type="email" name="email" value="">
-  Password: <input type="password" name="password" value="">
-  <input type="submit" name="submit" value="Submit">
-  <input type="button" onclick="window.location.href='registration.php'" value="Register">
+  <div class="form-group">
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-2">
+      <li style="color:gray; font-weight:bold;"><p>Email: </p><input type="email" name="email" value=""></li>
+      <li><br></li>
+      <li style="color:gray; font-weight:bold;"><p>Password: </p><input type="password" name="password" value=""></li>
+      <li><br></li>
+      <li><input class="btn btn-info" type="submit" name="submit" value="Submit"></li>
+  </div>
+</div>
 </form>

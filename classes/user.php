@@ -1,11 +1,11 @@
 <?php
-class Customer {
+class User {
   private $id;
-  public $firstname;
-  public $surname;
-  public $pword;
-  public $email;
-  public $db;
+  private $firstname;
+  private $surname;
+  private $pword;
+  private $email;
+  private $db;
 
   public function __construct(PDO $db = null){
     $this->db = $db;
@@ -39,14 +39,6 @@ class Customer {
 
   public function getSurname(){
     return $this->surname;
-  }
-
-  public function getUsername(){
-    return $this->username;
-  }
-
-  public function getDOB(){
-    return $this->dob;
   }
 
   public function getPword(){

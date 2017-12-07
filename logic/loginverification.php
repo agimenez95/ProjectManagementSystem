@@ -2,15 +2,19 @@
 // check login and create SESSION and count attempts
 require 'prereq.php';
 
-$custman = new CustomerManager(getDB());
-$customer = $custman->byEmail($_POST['email']);
+$userman = new UserManager(getDB());
+$user = $userman->byEmail($_POST['email']);
 
-if ($customer && $customer->passwordValid($_POST['password'])){
-  $_SESSION["userId"] = $customer->getID();
-  $_SESSION['login'] = 1;
+if ($user && $user->passwordValid($_POST['password'])){
+  $_SESSION["userId"] = $user->getID();
+  if ($userman->isManagerById($_SESSION["userId"]) == 1){
+    $_SESSION['login'] = 2;
+  } else {
+    $_SESSION['login'] = 1;
+  }
+  $_SESSION['page'] = 1;
   header('Location: '.$_SERVER['HTTP_REFERER']);
 } else {
-  $_SESSION['login'] = 0;
   header('Location: '.$_SERVER['HTTP_REFERER']);
 }
 
