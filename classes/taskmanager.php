@@ -9,13 +9,12 @@ class TaskManager {
   public function save(Task $task){
     $this->db->beginTransaction();
     $r = $this->db->prepare("
-        insert into Task (title, body, progress)
-        values (:title, :body, :progress)
+        insert into Task (title, body)
+        values (:title, :body)
     ");
     $worked = $r->execute(
       ['title' => $task->getTitle(),
-       'body' => $task->getDescription(),
-       'progress' => 'Not Started']
+       'body' => $task->getDescription()]
     );
     if (!$worked) {
       echo "failed";
@@ -31,12 +30,13 @@ class TaskManager {
   public function associateTaskToUser($taskId, $userId) {
     $this->db->beginTransaction();
     $r = $this->db->prepare("
-        insert into User_Task (userId, taskId)
-        values (:userId, :taskId)
+        insert into User_Task (userId, taskId, progress)
+        values (:userId, :taskId, :progress)
     ");
     $worked = $r->execute(
       ['userId' => $userId,
-       'taskId' => $taskId]
+       'taskId' => $taskId,
+       'progress' => "Not Started"]
     );
     if (!$worked) {
       return false;
@@ -48,9 +48,11 @@ class TaskManager {
   public function byId($id){
     $s = $this->db->prepare("
       select
-          *
+          Task.id, Task.title, Task.body, User_Task.progress
       from Task
-      where id = :id
+      inner join User_Task
+      on Task.id = User_Task.taskId
+      where Task.id = :id
     ");
     $s->execute(['id' => $id]);
     $row = $s->fetch();
@@ -66,21 +68,23 @@ class TaskManager {
     $tasks = [];
     $s = $this->db->prepare("
       select
-          task.id, task.title, task.body, task.progress, user.firstname, user.surname, user.email
+          task.id, task.title, task.body, user_task.progress, user.firstname, user.surname, user.email
       from Task
       inner join user_task
       on task.id = user_task.taskId
       inner join user
       on user.id = user_task.userId
-      where not task.progress = :completed
-      order by task.progress desc
+      where not user_task.progress = :completed
+      order by user_task.progress desc
     ");
     $s->execute(['completed' => "Completed"]);
     $row = $s->fetch();
     if (!$row){
         return null;
     }
+
     foreach ($s as $row) {
+      var_dump($row['title']);
       array_push($tasks, ['taskId' => $row['id'],
                           'title' => $row['title'],
                           'description' => $row['body'],
@@ -89,6 +93,7 @@ class TaskManager {
                           'surname' => $row['surname'],
                           'email' => $row['email']]);
     }
+    echo count($tasks);
     return $tasks;
   }
 
@@ -96,13 +101,13 @@ class TaskManager {
     $tasks = [];
     $s = $this->db->prepare("
     select
-        task.id, task.title, task.body, task.progress, user.firstname, user.surname, user.email
+        task.id, task.title, task.body, user_task.progress, user.firstname, user.surname, user.email
     from Task
     inner join user_task
     on task.id = user_task.taskId
     inner join user
     on user.id = user_task.userId
-    where progress = :completed
+    where user_task.progress = :completed
     ");
     $s->execute(['completed' => "Completed"]);
     $row = $s->fetch();
@@ -125,19 +130,19 @@ class TaskManager {
     $tasks = [];
     if ($completed) {
       $s = $this->db->prepare("
-        select task.id, task.title, task.body, task.progress
+        select task.id, task.title, task.body, user_task.progress
         from Task
         inner join User_Task
         on task.id = user_task.taskId
-        where (user_task.userId = :id and task.progress = :completed)
+        where (user_task.userId = :id and user_task.progress = :completed)
       ");
     } else {
       $s = $this->db->prepare("
-        select task.id, task.title, task.body, task.progress
+        select task.id, task.title, task.body, user_task.progress
         from Task
         inner join User_Task
         on task.id = user_task.taskId
-        where (user_task.userId = :id and not task.progress = :completed)
+        where (user_task.userId = :id and not user_task.progress = :completed)
       ");
     }
     $s->execute(['id' => $id,
@@ -153,22 +158,23 @@ class TaskManager {
     return $tasks;
   }
 
-  public function updateProgress(Task $task, $progress){
+  public function updateProgress($userId, $taskId, $progress){
     $this->db->beginTransaction();
     $r = $this->db->prepare("
-        update Task
+        update User_Task
         set progress = :progress
-        where id = :id
+        where (userId = :userId and taskId = :taskId)
     ");
     $worked = $r->execute(
-      ['id' => $task->getId(),
+      ['userId' => $userId,
+       'taskId' => $taskId,
        'progress' => $progress]
     );
     if (!$worked) {
+      echo "hello";
       return false;
     }
     $this->db->commit();
-    // $_SESSION['upgraded'] = $user->getFirstname()." ".$user->getSurname()." - ".$user->getEmail();
     return true;
   }
 

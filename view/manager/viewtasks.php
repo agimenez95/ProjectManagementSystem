@@ -10,6 +10,7 @@ if ($_SESSION['page'] == 1) {
 <form class="" action="singletask.php" method="post">
 <?php
   if ($table) {
+    // var_dump($table);
     echo "<table class='table'>
       <tr>
         <th>Task</th>

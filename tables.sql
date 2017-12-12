@@ -18,15 +18,15 @@ drop table if exists Task;
 create table Task (
   id int not null auto_increment PRIMARY KEY,
   title varchar(25) not null,
-  body varchar(300) not null,
-  progress varchar(25) not null
+  body varchar(1000) not null
 );
 
 drop table if exists User_Task;
 create table User_Task (
   id int not null auto_increment PRIMARY KEY,
   userId int not null,
-  taskId int not null
+  taskId int not null,
+  progress varchar(25) not null
 );
 -- insert into BonusPlayer(name, teamID)
 -- values

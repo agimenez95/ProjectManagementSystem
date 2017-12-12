@@ -47,33 +47,44 @@ require '../logic/prereq.php';
       }
       echo "";
 
-    if (isset($_SESSION['taskId']) && !isset($_SESSION['edit'])) {
-      if ($_SESSION['taskId'] != -1 ) {
+      if (isset($_SESSION['taskId']) && !isset($_SESSION['edit'])) {
+        if ($_SESSION['taskId'] != -1 ) {
+          $taskman = new TaskManager(getDB());
+          $task = $taskman->byId($_SESSION['taskId']);
+          echo "<div class='col-md-2'></div>";
+          echo "<div class='col-md-5'>";
+          echo "<h3>".$task->getTitle()."</h3>";
+          echo "<p>".$task->getDescription()."</p>";
+          $_SESSION['progress'] = $task->getProgress();
+          echo "</div>";
+          echo "<div class='col-md-3'>";
+
+          echo "<br>";
+          echo "<p>Completion:</p>";
+          echo '<form class="progression" action="../logic/progressionupdate.php" method="post">';
+            include "completiondropdown.php";
+            echo '<input type="hidden" name="taskId" value="'.$_SESSION['taskId'].'">';
+            echo '<input class="btn btn-success" type="submit" name="submit" value="Submit">';
+          echo "</form>";
+          echo "</div>";
+        }
+        unset($_SESSION['taskId']);
+      }
+      if (isset($_SESSION['edit'])) {
         $taskman = new TaskManager(getDB());
         $task = $taskman->byId($_SESSION['taskId']);
-        echo "<h3>".$task->getTitle()."</h3>";
-        echo "<p>".$task->getDescription()."</p>";
-        $_SESSION['progress'] = $task->getProgress();
-        echo "<p>Completion:</p>";
-        echo '<form class="progression" action="../logic/progressionupdate.php" method="post">';
-          include "completiondropdown.php";
-          echo '<input type="hidden" name="taskId" value="'.$_SESSION['taskId'].'">';
-          echo '<input class="btn btn-success" type="submit" name="submit" value="Submit">';
-        echo "</form>";
-      }
-      unset($_SESSION['taskId']);
-    }
-    if (isset($_SESSION['edit'])) {
-      $taskman = new TaskManager(getDB());
-      $task = $taskman->byId($_SESSION['taskId']);
-      $_SESSION['title'] = $task->getTitle();
-      $_SESSION['description'] = $task->getDescription();
+        $_SESSION['title'] = $task->getTitle();
+        $_SESSION['description'] = $task->getDescription();
 
-      include_once "manager/createtask.php";
-      unset($_SESSION['edit']);
-    }
-    ?>
+        include_once "manager/createtask.php";
+        unset($_SESSION['edit']);
+      }
+      ?>
     </div>
   </body>
-  <footer class="container">Adriano</footer>
+  <footer class="footer">
+    <div class="container">
+      <p>Adriano</p>
+    </div>
+  </footer>
 </html>

@@ -1,5 +1,7 @@
 <form class="" action="../logic/taskcreation.php" method="post">
-  <p>Name of Task:</p>
+  <div class="col-md-1"></div>
+  <div class="col-md-10">
+  <h4>Name of Task:</h4>
   <?php
   if (isset($_SESSION['title'])) {
     echo '<input type="text" name="title" value="'.$_SESSION['title'].'">';
@@ -7,8 +9,8 @@
     echo '<input type="text" name="title" value="">';
   }
   ?>
-  <br>
-  <p>Task Description:</p>
+  <br><br>
+  <h4>Task Description:</h4>
   <?php
   if (isset($_SESSION['description'])) {
     echo '<textarea rows="4" cols="50" name="description">'.$_SESSION['description'].'</textarea>';
@@ -78,3 +80,4 @@ if (isset($_SESSION['description'])) {
   unset($_SESSION['description']);
 }
 ?>
+</div>

@@ -1,5 +1,6 @@
 <?php
 include_once "prereq.php";
+var_dump($_POST);
 if ($_POST['submit'] === 'Add Another User') {
   if (isset($_SESSION['numberOfDropdowns'])){
     $userman = new UserManager(getDB());
