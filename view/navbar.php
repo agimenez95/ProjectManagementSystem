@@ -9,13 +9,13 @@
       </button>
       <?php
       if ($_SESSION['login'] == 1) {
-        echo "<a class='navbar-brand' href='#'>New Starter Dashboard</a>";
+        echo "<a class='navbar-brand' href='index.php'>New Starter Dashboard</a>";
       }
       elseif ($_SESSION['login'] == 2) {
-        echo "<a class='navbar-brand' href='#'>Manager Dashboard</a>";
+        echo "<a class='navbar-brand' href='index.php'>Manager Dashboard</a>";
       }
       else {
-        echo "<a class='navbar-brand' href='#'>New Starter Management System</a>";
+        echo "<a class='navbar-brand' href='index.php'>New Starter Management System</a>";
       }
        ?>
 
@@ -34,7 +34,8 @@
           echo '<li><a href="../sessionchanger/firstpage.php">In Progress</a></li>
                 <li><a href="../sessionchanger/secondpage.php">View Completed Tasks</a></li>
                 <li><a href="../sessionchanger/thirdpage.php">Create Tasks</a></li>
-                <li><a href="../sessionchanger/fourthpage.php">Add New Managers</a></li>';
+                <li><a href="../sessionchanger/fourthpage.php">Add New Managers</a></li>
+                <li><a href="../sessionchanger/fifthpage.php">All Users</a></li>';
         }
         ?>
       </ul>

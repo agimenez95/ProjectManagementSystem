@@ -2,7 +2,7 @@
 $usermanager = new UserManager(getDB());
 $allUsers = $usermanager->allNewStarters();
 if ($allUsers) {
-  echo "<select name='option0'>";
+  echo "<select class='selectpicker' name='option0'>";
     foreach ($allUsers as $id => $user) {
       if ($_SESSION['option0'] == $id) {
         echo "<option selected value =".$id.">$user</option>";

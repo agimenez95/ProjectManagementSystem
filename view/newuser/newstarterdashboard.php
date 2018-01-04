@@ -1,12 +1,10 @@
 <?php
 include_once "navbar.php";
+echo "<div class='container'>";
 if ($_SESSION['page'] == 1) {
-  include "viewtasks.php";
+  echo "<h3>In Progress</h3>";
 } elseif ($_SESSION['page'] == 2) {
-  include "viewtasks.php";
-} elseif ($_SESSION['page'] == 3) {
-  echo "<p>New Manager</p>";
-} elseif ($_SESSION['page'] == 4) {
-  echo "<p>Completed Tasks</p>";
+  echo "<h3>Completed</h3>";
 }
+include "viewtasks.php";
 ?>

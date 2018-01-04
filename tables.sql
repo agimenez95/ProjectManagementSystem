@@ -11,7 +11,8 @@ create table User (
   dateStarted datetime not null,
   email varchar(100) not null,
   pword varchar(60) not null,
-  isManager boolean default 0
+  isManager boolean default 0,
+  disabled boolean default 0
 );
 
 drop table if exists Task;
@@ -26,6 +27,7 @@ create table User_Task (
   id int not null auto_increment PRIMARY KEY,
   userId int not null,
   taskId int not null,
+  lastChanged datetime not null,
   progress varchar(25) not null
 );
 -- insert into BonusPlayer(name, teamID)

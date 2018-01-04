@@ -1,6 +1,5 @@
 <?php
 include_once "prereq.php";
-var_dump($_POST);
 if ($_POST['submit'] === 'Add Another User') {
   if (isset($_SESSION['numberOfDropdowns'])){
     $userman = new UserManager(getDB());
@@ -77,10 +76,22 @@ foreach ($_POST as $key => $value) {
     $task->fromArray($_POST);
     $task->setId($_SESSION['taskId']);
     $taskmanager->updateContent($task);
-    // $_SESSION['edit'] = 1;
+    $taskmanager->updateTime($_SESSION['taskId']);
     header('Location: '.$_SERVER['HTTP_REFERER']);
-  } elseif ($value === "Delete") {
+  } elseif ($value === "Unassign Task") {
     $taskmanager = new TaskManager(getDB());
+    // check to see if there is only one user assigned to the task
+    $count = $taskmanager->howManyAssigned($_SESSION['taskId']);
+    if ($count == 1) {
+      $taskmanager->deleteTask($_SESSION['taskId']);
+    }
+    // deletes a single relation between task and user
+    $taskmanager->removeUserFromTask($_SESSION['taskUserId'], $_SESSION['taskId']);
+    unset($_SESSION['taskId']);
+    header('Location: '.$_SERVER['HTTP_REFERER']);
+  } elseif ($value === "Delete All") {
+    $taskmanager = new TaskManager(getDB());
+    // deletes all relations between a task and the users as well as deleting the task
     $taskmanager->deleteTask($_SESSION['taskId']);
     $taskmanager->deleteUserTask($_SESSION['taskId']);
     unset($_SESSION['taskId']);

@@ -1,6 +1,4 @@
-<select class="progress" name="progress">
-
-
+<select class="selectpicker" name="progress">
 <?php
 if ($_SESSION['progress'] == "Not Started") {
   echo '<option selected value="Not Started">Not Started</option>
@@ -17,3 +15,4 @@ if ($_SESSION['progress'] == "Not Started") {
 }
 ?>
 </select>
+<br><br>

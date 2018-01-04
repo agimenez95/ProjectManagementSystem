@@ -41,7 +41,7 @@ class UserManager {
   public function byEmail($email){
     $s = $this->db->prepare("
           select
-              id, pword, firstname, surname, email, datestarted, isManager
+              id, pword, firstname, surname, email, datestarted, isManager, disabled
           from User
           where email = :email
     ");
@@ -138,6 +138,18 @@ class UserManager {
     return $users;
   }
 
+  public function allUsers(){
+    $users = [];
+    $r = $this->db->query("
+          select * from User
+    ");
+    $row = $r->fetchAll();
+    if (!$row){
+        return null;
+    }
+    return $row;
+  }
+
   public function upgradeUser(User $user){
     $this->db->beginTransaction();
     $r = $this->db->prepare("
@@ -167,5 +179,20 @@ class UserManager {
     return $row['count(id)'];
   }
 
+  public function disableUserById($id) {
+    $this->db->beginTransaction();
+    $r = $this->db->prepare("
+      update User
+      set disabled = 1
+      where id = :id
+    ");
+    $worked = $r->execute(['id' => $id]);
+    if (!$worked) {
+      return false;
+    }
+    $this->db->commit();
+    $_SESSION['upgraded'] = "The user has been disabled.";
+    return true;
+  }
 }
 ?>

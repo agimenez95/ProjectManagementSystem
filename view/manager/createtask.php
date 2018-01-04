@@ -27,7 +27,7 @@
           if ($i == 0) {
             include "../logic/userdropdown.php";
           } else {
-            echo "<select name='option$i'>";
+            echo "<select class='selectpicker' name='option$i'>";
             $usermanager = new UserManager(getDB());
             $allUsers = $usermanager->allNewStarters();
             if ($allUsers) {
@@ -65,7 +65,8 @@
     }
     if (isset($_SESSION['edit'])) {
       echo '<input class="btn btn-primary" type="submit" name="update" value="Update"> ';
-      echo '<input class="btn btn-danger" type="submit" name="delete" value="Delete">';
+      echo '<input class="btn btn-warning" type="submit" name="remove" value="Unassign Task"> '; ///////////////////pass the data where the user id is hidden in the table onto the create task form
+      echo '<input class="btn btn-danger" type="submit" name="delete" value="Delete All"><br><br>';
     } else {
       echo '<input class="btn btn-success" type="submit" name="submit" value="Submit">';
     }

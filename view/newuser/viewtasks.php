@@ -24,11 +24,16 @@ if ($_SESSION['page'] == 1) {
         echo "<td>$number</td>";
         echo "<td>".$row['title']."</td>";
         echo "<td>".$row['progress']."</td>";
-        echo "<td><input class='btn btn-info' type='submit' name='".$row['taskId']."' value='view'></td>";
+        echo "<td><input class='btn btn-info' type='submit' name='".$row['taskId']."' value='View'></td>";
       echo "</tr>";
     }
   } else {
-    echo "<p>No tasks have been assigned to you.</p>";
+    if ($_SESSION['page'] == 1) {
+      echo "<p>No tasks have been assigned to you.</p>";
+    } elseif ($_SESSION['page'] == 2) {
+      echo "<p>You have no completed tasks.</p>";
+    }
+
   }
 
   ?>

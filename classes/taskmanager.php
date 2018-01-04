@@ -14,30 +14,26 @@ class TaskManager {
     ");
     $worked = $r->execute(
       ['title' => $task->getTitle(),
-       'body' => $task->getDescription()]
-    );
+       'body' => $task->getDescription()]);
     if (!$worked) {
       echo "failed";
       return false;
     }
     $task->setId($this->db->lastInsertId());
     $this->db->commit();
-    // $task->setId($this->db->lastInsertId());
-    // echo $this->db->lastInsertId();
     return $task;
   }
 
   public function associateTaskToUser($taskId, $userId) {
     $this->db->beginTransaction();
     $r = $this->db->prepare("
-        insert into User_Task (userId, taskId, progress)
-        values (:userId, :taskId, :progress)
+        insert into User_Task (userId, taskId, progress, lastChanged)
+        values (:userId, :taskId, :progress, now())
     ");
     $worked = $r->execute(
       ['userId' => $userId,
        'taskId' => $taskId,
-       'progress' => "Not Started"]
-    );
+       'progress' => "Not Started"]);
     if (!$worked) {
       return false;
     }
@@ -48,7 +44,7 @@ class TaskManager {
   public function byId($id){
     $s = $this->db->prepare("
       select
-          Task.id, Task.title, Task.body, User_Task.progress
+          Task.id, Task.title, Task.body, User_Task.progress , User_Task.lastChanged
       from Task
       inner join User_Task
       on Task.id = User_Task.taskId
@@ -64,28 +60,77 @@ class TaskManager {
     return $task;
   }
 
-  public function allPending(){
+  public function allPending($option){
     $tasks = [];
-    $s = $this->db->prepare("
-      select
-          task.id, task.title, task.body, user_task.progress, user.firstname, user.surname, user.email
-      from Task
-      inner join user_task
-      on task.id = user_task.taskId
-      inner join user
-      on user.id = user_task.userId
-      where not user_task.progress = :completed
-      order by user_task.progress desc
-    ");
-    $s->execute(['completed' => "Completed"]);
-    $row = $s->fetch();
-    if (!$row){
-        return null;
+    if ($option == "In Progress") {
+      $s = $this->db->prepare("
+        select
+            user.id as userId, task.id, task.title, task.body, user_task.progress, user.firstname, user.surname, user.email, user_task.lastChanged
+        from Task
+        inner join user_task
+        on task.id = user_task.taskId
+        inner join user
+        on user.id = user_task.userId
+        where user_task.progress = :completed
+        order by user_task.progress asc
+      ");
+      $s->execute(['completed' => "In Progress"]);
+    } elseif ($option == "Not Started") {
+     $s = $this->db->prepare("
+       select
+           user.id as userId, task.id, task.title, task.body, user_task.progress, user.firstname, user.surname, user.email, user_task.lastChanged
+       from Task
+       inner join user_task
+       on task.id = user_task.taskId
+       inner join user
+       on user.id = user_task.userId
+       where user_task.progress = :completed
+       order by user_task.lastChanged desc
+     ");
+     $s->execute(['completed' => "Not Started"]);
+   } elseif ($option == "Time") {
+      $s = $this->db->prepare("
+        select
+            user.id as userId, task.id, task.title, task.body, user_task.progress, user.firstname, user.surname, user.email, user_task.lastChanged
+        from Task
+        inner join user_task
+        on task.id = user_task.taskId
+        inner join user
+        on user.id = user_task.userId
+        where not user_task.progress = :completed
+        order by user_task.lastChanged desc, user_task.progress asc, user.surname asc
+      ");
+      $s->execute(['completed' => "Completed"]);
+    } elseif ($option == "All") {
+      $s = $this->db->prepare("
+        select
+            user.id as userId, task.id, task.title, task.body, user_task.progress, user.firstname, user.surname, user.email, user_task.lastChanged
+        from Task
+        inner join user_task
+        on task.id = user_task.taskId
+        inner join user
+        on user.id = user_task.userId
+        where not user_task.progress = :completed
+        order by user_task.progress asc, user_task.lastChanged desc, user.surname asc
+      ");
+      $s->execute(['completed' => "Completed"]);
+    }else {
+      $s = $this->db->prepare("
+        select
+            user.id as userId, task.id, task.title, task.body, user_task.progress, user.firstname, user.surname, user.email, user_task.lastChanged
+        from Task
+        inner join user_task
+        on task.id = user_task.taskId
+        inner join user
+        on user.id = user_task.userId
+        where not user_task.progress = :completed
+        order by user_task.lastChanged desc, user.surname asc
+      ");
+      $s->execute(['completed' => "Completed"]);
     }
-
     foreach ($s as $row) {
-      var_dump($row['title']);
-      array_push($tasks, ['taskId' => $row['id'],
+      array_push($tasks, ['userId' => $row['userId'],
+                          'taskId' => $row['id'],
                           'title' => $row['title'],
                           'description' => $row['body'],
                           'progress' => $row['progress'],
@@ -93,7 +138,6 @@ class TaskManager {
                           'surname' => $row['surname'],
                           'email' => $row['email']]);
     }
-    echo count($tasks);
     return $tasks;
   }
 
@@ -101,21 +145,19 @@ class TaskManager {
     $tasks = [];
     $s = $this->db->prepare("
     select
-        task.id, task.title, task.body, user_task.progress, user.firstname, user.surname, user.email
+        user.id as userId, task.id, task.title, task.body, user_task.progress, user.firstname, user.surname, user.email, user_task.lastChanged
     from Task
     inner join user_task
     on task.id = user_task.taskId
     inner join user
     on user.id = user_task.userId
     where user_task.progress = :completed
+    order by user_task.lastChanged desc
     ");
     $s->execute(['completed' => "Completed"]);
-    $row = $s->fetch();
-    if (!$row){
-        return null;
-    }
     foreach ($s as $row) {
-      array_push($tasks, ['taskId' => $row['id'],
+      array_push($tasks, ['userId' => $row['userId'],
+                          'taskId' => $row['id'],
                           'title' => $row['title'],
                           'description' => $row['body'],
                           'progress' => $row['progress'],
@@ -130,30 +172,31 @@ class TaskManager {
     $tasks = [];
     if ($completed) {
       $s = $this->db->prepare("
-        select task.id, task.title, task.body, user_task.progress
+        select task.id, task.title, task.body, user_task.progress, user_task.lastChanged
         from Task
         inner join User_Task
         on task.id = user_task.taskId
         where (user_task.userId = :id and user_task.progress = :completed)
+        order by user_task.lastChanged desc
       ");
     } else {
       $s = $this->db->prepare("
-        select task.id, task.title, task.body, user_task.progress
+        select task.id, task.title, task.body, user_task.progress, user_task.lastChanged
         from Task
         inner join User_Task
         on task.id = user_task.taskId
         where (user_task.userId = :id and not user_task.progress = :completed)
+        order by user_task.progress asc, user_task.lastChanged desc
       ");
     }
     $s->execute(['id' => $id,
-                 'completed' => "completed"]);
-    $row = $s->fetch();
-    if (!$row){
-        return null;
-    }
+                 'completed' => "Completed"]);
     foreach ($s as $row) {
-      array_push($tasks, ['taskId' => $row['id'], 'title' => $row['title'], 'description' => $row['body'], 'progress' => $row['progress']]);
-
+      array_push($tasks, ['taskId' => $row['id'],
+                          'title' => $row['title'],
+                          'description' => $row['body'],
+                          'progress' => $row['progress'],
+                          'lastChanged' => $row['lastChanged']]);
     }
     return $tasks;
   }
@@ -162,16 +205,14 @@ class TaskManager {
     $this->db->beginTransaction();
     $r = $this->db->prepare("
         update User_Task
-        set progress = :progress
+        set progress = :progress, lastChanged = now()
         where (userId = :userId and taskId = :taskId)
     ");
     $worked = $r->execute(
       ['userId' => $userId,
        'taskId' => $taskId,
-       'progress' => $progress]
-    );
+       'progress' => $progress]);
     if (!$worked) {
-      echo "hello";
       return false;
     }
     $this->db->commit();
@@ -188,13 +229,28 @@ class TaskManager {
     $worked = $r->execute(
       ['taskId' => $task->getId(),
        'title' => $task->getTitle(),
-       'body' => $task->getDescription()]
-    );
+       'body' => $task->getDescription()]);
     if (!$worked) {
       return false;
     }
     $this->db->commit();
     $_SESSION['upgraded'] = "The task has been updated.";
+    return true;
+  }
+
+  public function updateTime($taskId){
+    $this->db->beginTransaction();
+    $r = $this->db->prepare("
+        update User_Task
+        set lastChanged = now()
+        where taskId = :taskId
+    ");
+    $worked = $r->execute(
+      ['taskId' => $taskId]);
+    if (!$worked) {
+      return false;
+    }
+    $this->db->commit();
     return true;
   }
 
@@ -204,7 +260,7 @@ class TaskManager {
         delete from Task
         where id = :id
     ");
-    $worked = $r->execute( ['id' => $taskId] );
+    $worked = $r->execute(['id' => $taskId]);
     if (!$worked) {
       return false;
     }
@@ -218,13 +274,44 @@ class TaskManager {
         delete from User_Task
         where taskId = :taskId
     ");
-    $worked = $r->execute( ['taskId' => $taskId] );
+    $worked = $r->execute(['taskId' => $taskId]);
     if (!$worked) {
       return false;
     }
     $this->db->commit();
     $_SESSION['upgraded'] = "The task has been deleted.";
     return true;
+  }
+
+  public function removeUserFromTask($userId, $taskId){
+    $this->db->beginTransaction();
+    $r = $this->db->prepare("
+        delete from User_Task
+        where (userID = :userId and taskId = :taskId)
+    ");
+    $worked = $r->execute(['userId' => $userId,
+                           'taskId' => $taskId]);
+    if (!$worked) {
+      return false;
+    }
+    $this->db->commit();
+    $_SESSION['upgraded'] = "The task has been deleted.";
+    return true;
+  }
+
+  public function howManyAssigned($id){
+    $s = $this->db->prepare("
+      select
+          count(userId)
+      from User_Task
+      where taskId = :id
+    ");
+    $s->execute(['id' => $id]);
+    $row = $s->fetch();
+    if (!$row){
+        return null;
+    }
+    return $row['count(userId)'];
   }
 }
 ?>

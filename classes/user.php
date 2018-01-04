@@ -6,6 +6,7 @@ class User {
   private $pword;
   private $email;
   private $db;
+  private $disabled;
 
   public function __construct(PDO $db = null){
     $this->db = $db;
@@ -23,6 +24,7 @@ class User {
     $this->firstname = $a['firstname'];
     $this->surname = $a['surname'];
     $this->email = $a['email'];
+    $this->disabled = $a['disabled'];
   }
 
   public function setID($id){
@@ -51,6 +53,10 @@ class User {
 
   public function getEmail(){
     return $this->email;
+  }
+
+  public function getDisabled(){
+    return $this->disabled;
   }
 }
 ?>

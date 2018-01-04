@@ -7,8 +7,15 @@ require '../logic/prereq.php';
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>New Starter Management System</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>  </head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+    <!-- (Optional) Latest compiled and minified JavaScript translation files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/i18n/defaults-*.min.js"></script>
+  </head>
   <body>
     <header>
       <?php
@@ -63,12 +70,18 @@ require '../logic/prereq.php';
           echo "<p>Completion:</p>";
           echo '<form class="progression" action="../logic/progressionupdate.php" method="post">';
             include "completiondropdown.php";
-            echo '<input type="hidden" name="taskId" value="'.$_SESSION['taskId'].'">';
+            if ($_SESSION['login'] == 1) { //new starter
+              echo '<input type="hidden" name="userId" value="'.$_SESSION['userId'].'">';
+            } elseif ($_SESSION['login'] == 2) { //manager
+              echo '<input type="hidden" name="userId" value="'.$_SESSION['taskUserId'].'">';
+            }
+            echo '<input type="hidden" name="taskId" value="'.$task->getId().'">';
             echo '<input class="btn btn-success" type="submit" name="submit" value="Submit">';
           echo "</form>";
           echo "</div>";
         }
         unset($_SESSION['taskId']);
+        unset($_SESSION['taskUserId']);
       }
       if (isset($_SESSION['edit'])) {
         $taskman = new TaskManager(getDB());
@@ -84,7 +97,7 @@ require '../logic/prereq.php';
   </body>
   <footer class="footer">
     <div class="container">
-      <p>Adriano</p>
+      <p>Created by Adriano Gimenez</p>
     </div>
   </footer>
 </html>
