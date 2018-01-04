@@ -1,21 +1,22 @@
+<br>
 <form class="" action="../logic/taskcreation.php" method="post">
   <div class="col-md-1"></div>
   <div class="col-md-10">
   <h4>Name of Task:</h4>
   <?php
   if (isset($_SESSION['title'])) {
-    echo '<input type="text" name="title" value="'.$_SESSION['title'].'">';
+    echo '<input class="form-control" type="text" name="title" value="'.$_SESSION['title'].'">';
   } else {
-    echo '<input type="text" name="title" value="">';
+    echo '<input class="form-control" type="text" name="title" value="">';
   }
   ?>
   <br><br>
   <h4>Task Description:</h4>
   <?php
   if (isset($_SESSION['description'])) {
-    echo '<textarea rows="4" cols="50" name="description">'.$_SESSION['description'].'</textarea>';
+    echo '<textarea class="form-control" rows="4" cols="50" name="description">'.$_SESSION['description'].'</textarea>';
   } else {
-    echo '<textarea rows="4" cols="50" name="description"></textarea>';
+    echo '<textarea class="form-control" rows="4" cols="50" name="description"></textarea>';
   }
   ?>
   <br><br>

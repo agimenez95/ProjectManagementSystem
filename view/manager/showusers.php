@@ -1,5 +1,6 @@
 <?php
 include_once "../logic/prereq.php";
+echo "<br>";
 $userman = new UserManager(getDB());
 $table = $userman->allUsers();
 if ($table) {

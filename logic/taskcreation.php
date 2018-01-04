@@ -25,7 +25,10 @@ if ($_POST['submit'] === 'Add Another User') {
   foreach ($_POST as $key1 => $value1) {
     foreach ($_POST as $key2 => $value2) {
       if ($value1 === $value2 && $key1 != $key2) {
-        $_SESSION['upgraded'] = "Error: There are at least 2 fields with the same value!";
+        $_SESSION['upgraded'] = "Try Again. There are at least 2 fields with the same value!";
+        // Let the fields remember their content
+        $_SESSION['title'] = $_POST['title'];
+        $_SESSION['description'] = $_POST['description'];
         $save = false;
         header('Location: '.$_SERVER['HTTP_REFERER']);
       }
@@ -58,6 +61,9 @@ if ($_POST['submit'] === 'Add Another User') {
 foreach ($_POST as $key => $value) {
   if ($value === "X") {
     if (isset($_SESSION['numberOfDropdowns'])){
+      // Let the fields remember their content
+      $_SESSION['title'] = $_POST['title'];
+      $_SESSION['description'] = $_POST['description'];
       $happened = false;
       for ($i=0; $i < $_SESSION['numberOfDropdowns']-1; $i++) {
         if ($key ===  "option".$i || $happened) {

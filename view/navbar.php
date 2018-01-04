@@ -53,12 +53,8 @@
           } else {
             echo '<li><a href="../logic/logoutaction.php"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>';
           }
-
         ?>
-
       </ul>
-      <!-- REGISTER -->
     </div>
   </div>
 </nav>
-<!-- </nav> -->

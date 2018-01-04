@@ -1,5 +1,6 @@
 <?php
 include_once "../logic/prereq.php";
+echo "<br>";
 $taskman = new TaskManager(getDB());
 if ($_SESSION['page'] == 1) {
   echo '<form class="" action="../logic/setorderingoption.php" method="post">

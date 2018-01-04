@@ -4,6 +4,7 @@ if (isset($_SESSION['numberOfDropdowns']) && $_SESSION['page'] != 3){
   unset($_SESSION['numberOfDropdowns']);
 }
 echo "<div class='container'>";
+echo "<br>";
 if ($_SESSION['page'] == 1) {
   echo "<h3>In Progress</h3>";
   include_once "manager/viewtasks.php";

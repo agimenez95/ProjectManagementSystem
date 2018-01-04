@@ -1,5 +1,6 @@
 <?php
 include_once "../logic/prereq.php";
+echo "<br>";
 $taskman = new TaskManager(getDB());
 if ($_SESSION['page'] == 1) {
   $table = $taskman->byUserId($_SESSION["userId"]);

@@ -11,6 +11,7 @@ require '../logic/prereq.php';
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../styling/customstyling.css">
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
     <!-- (Optional) Latest compiled and minified JavaScript translation files -->
@@ -19,14 +20,6 @@ require '../logic/prereq.php';
   <body>
     <header>
       <?php
-      // if (isset($_SESSION['login'])) {
-      //   if ($_SESSION['login'] == 1 || $_SESSION['login'] == 2)  {
-      //     include_once "logout.php";
-      //   }
-      // }
-      // else {
-      //   include_once "login.php";
-      // }
       if (isset($_SESSION['registrationComplete'])) {
         echo '<div class="alert alert-info" role="alert">
           Thank you for registering!
@@ -50,9 +43,8 @@ require '../logic/prereq.php';
       } else {
         include_once "navbar.php";
         echo "<div class='container'>";
-        echo "<p>Please log in to view your dashboard.</p>";
+        echo "<br><h4>Please log in to view your dashboard.</h4><br><br><br><br><br><br><br><br><br><br>";
       }
-      echo "";
 
       if (isset($_SESSION['taskId']) && !isset($_SESSION['edit'])) {
         if ($_SESSION['taskId'] != -1 ) {
@@ -97,6 +89,7 @@ require '../logic/prereq.php';
   </body>
   <footer class="footer">
     <div class="container">
+      <br><br>
       <p>Created by Adriano Gimenez</p>
     </div>
   </footer>
