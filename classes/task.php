@@ -9,6 +9,8 @@ class Task {
   public function __construct(PDO $db = null){
     $this->db = $db;
   }
+
+  // This method will create a task.
   public function fromArray($a){
     if (isset($a['taskId'])) {
       $this->id = $a['taskId'];

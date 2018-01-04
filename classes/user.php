@@ -16,6 +16,7 @@ class User {
     return password_verify($pword, $this->pword);
   }
 
+  // This method will create a user.
   public function fromArray($a){
     if(isset($a['id'])){
       $this->id = $a['id'];

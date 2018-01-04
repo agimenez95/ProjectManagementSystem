@@ -6,6 +6,7 @@ class UserManager {
     $this->db = $db;
   }
 
+  // Return a user by its id.
   public function byId($id){
     $s = $this->db->prepare("
       select
@@ -23,6 +24,7 @@ class UserManager {
     return $cust;
   }
 
+  // Check if a user is a manager.
   public function isManagerById($id){
     $s = $this->db->prepare("
       select
@@ -38,6 +40,7 @@ class UserManager {
     return $row['isManager'];
   }
 
+  // Retrieve a users details by its email.
   public function byEmail($email){
     $s = $this->db->prepare("
           select
@@ -55,6 +58,7 @@ class UserManager {
     return $cust;
   }
 
+  // Only get the id of the user by its email.
   public function idByEmail($email){
     $s = $this->db->prepare("
           select
@@ -72,6 +76,7 @@ class UserManager {
     return $cust;
   }
 
+  // Store the users data from the registration.
   public function save(User $user){
     $this->db->beginTransaction();
     $r = $this->db->prepare("
@@ -92,6 +97,7 @@ class UserManager {
     return true;
   }
 
+  // The first user that will be saved onto the database will have administrator rights.
   public function saveFirst(User $user){
     $this->db->beginTransaction();
     $r = $this->db->prepare("
@@ -112,6 +118,7 @@ class UserManager {
     return true;
   }
 
+  // Check to see if there are any users on the database.
   public function isItTheFirst(){
     $s = $this->db->prepare("
           select * from User
@@ -124,6 +131,7 @@ class UserManager {
     return $row;
   }
 
+  // Returns a list of all of the new starters.
   public function allNewStarters(){
     $users = [];
     $r = $this->db->query("
@@ -138,6 +146,7 @@ class UserManager {
     return $users;
   }
 
+  // Returns all of the users data.
   public function allUsers(){
     $users = [];
     $r = $this->db->query("
@@ -150,6 +159,7 @@ class UserManager {
     return $row;
   }
 
+  // Turns a new starter account into a manager account.
   public function upgradeUser(User $user){
     $this->db->beginTransaction();
     $r = $this->db->prepare("
@@ -168,6 +178,7 @@ class UserManager {
     return true;
   }
 
+  // Counts how many users there are that are not managers.
   public function notManager() {
     $r = $this->db->query("
           select count(id) from User where isManager = 0
@@ -179,6 +190,7 @@ class UserManager {
     return $row['count(id)'];
   }
 
+  // This will disable an account but it will not delete it as it will still be associated to completed tasks.
   public function disableUserById($id) {
     $this->db->beginTransaction();
     $r = $this->db->prepare("

@@ -81,6 +81,7 @@ foreach ($_POST as $key => $value) {
     $task = new Task();
     $task->fromArray($_POST);
     $task->setId($_SESSION['taskId']);
+    // Content is updated as well as the timestamp on the database.
     $taskmanager->updateContent($task);
     $taskmanager->updateTime($_SESSION['taskId']);
     header('Location: '.$_SERVER['HTTP_REFERER']);

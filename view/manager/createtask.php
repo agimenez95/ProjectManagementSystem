@@ -66,7 +66,7 @@
     }
     if (isset($_SESSION['edit'])) {
       echo '<input class="btn btn-primary" type="submit" name="update" value="Update"> ';
-      echo '<input class="btn btn-warning" type="submit" name="remove" value="Unassign Task"> '; ///////////////////pass the data where the user id is hidden in the table onto the create task form
+      echo '<input class="btn btn-warning" type="submit" name="remove" value="Unassign Task"> ';
       echo '<input class="btn btn-danger" type="submit" name="delete" value="Delete All"><br><br>';
     } else {
       echo '<input class="btn btn-success" type="submit" name="submit" value="Submit">';

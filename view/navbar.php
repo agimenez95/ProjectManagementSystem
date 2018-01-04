@@ -1,4 +1,4 @@
-<!-- <nav class="navbar navbar-default container-fluid"> -->
+<!-- The navigation bar controls what is on the current session -->
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -23,8 +23,6 @@
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
         <li class="dropdown">
-        <!--   <a class="dropdown-toggle" href="#">Page 1</a> -->
-
         <?php
         if ($_SESSION['login'] == 1) {
           echo '<li><a href="../sessionchanger/firstpage.php">In Progress</a></li>

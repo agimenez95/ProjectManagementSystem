@@ -2,6 +2,7 @@
 include_once "../logic/prereq.php";
 echo "<br>";
 $taskman = new TaskManager(getDB());
+//get tasks that are either completed or not completed to display in the table.
 if ($_SESSION['page'] == 1) {
   echo '<form class="" action="../logic/setorderingoption.php" method="post">
   Order by: ';

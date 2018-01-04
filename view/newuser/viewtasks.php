@@ -2,6 +2,7 @@
 include_once "../logic/prereq.php";
 echo "<br>";
 $taskman = new TaskManager(getDB());
+//get tasks that are either completed or not completed to display in the table.
 if ($_SESSION['page'] == 1) {
   $table = $taskman->byUserId($_SESSION["userId"]);
 } elseif ($_SESSION['page'] == 2) {
@@ -34,9 +35,7 @@ if ($_SESSION['page'] == 1) {
     } elseif ($_SESSION['page'] == 2) {
       echo "<p>You have no completed tasks.</p>";
     }
-
   }
-
   ?>
   </table>
 </form>

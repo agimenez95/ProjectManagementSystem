@@ -6,6 +6,7 @@ class TaskManager {
     $this->db = $db;
   }
 
+  // Saves the title and description of a task to the database.
   public function save(Task $task){
     $this->db->beginTransaction();
     $r = $this->db->prepare("
@@ -16,7 +17,6 @@ class TaskManager {
       ['title' => $task->getTitle(),
        'body' => $task->getDescription()]);
     if (!$worked) {
-      echo "failed";
       return false;
     }
     $task->setId($this->db->lastInsertId());
@@ -24,6 +24,7 @@ class TaskManager {
     return $task;
   }
 
+  // Association of a task is made to a user on another table. Many users to many tasks can be associated.
   public function associateTaskToUser($taskId, $userId) {
     $this->db->beginTransaction();
     $r = $this->db->prepare("
@@ -41,6 +42,7 @@ class TaskManager {
     return true;
   }
 
+  // Task is found by its id
   public function byId($id){
     $s = $this->db->prepare("
       select
@@ -60,9 +62,11 @@ class TaskManager {
     return $task;
   }
 
+  // Returns all of the tasks that are not completed.
   public function allPending($option){
     $tasks = [];
     if ($option == "In Progress") {
+      // Only returns tasks in progress. This is ordered by the last updated task.
       $s = $this->db->prepare("
         select
             user.id as userId, task.id, task.title, task.body, user_task.progress, user.firstname, user.surname, user.email, user_task.lastChanged
@@ -72,23 +76,25 @@ class TaskManager {
         inner join user
         on user.id = user_task.userId
         where user_task.progress = :completed
-        order by user_task.progress asc
+        order by user_task.lastChanged desc
       ");
       $s->execute(['completed' => "In Progress"]);
     } elseif ($option == "Not Started") {
-     $s = $this->db->prepare("
-       select
+      // Only returns tasks that have not been started. This is ordered by the last updated task.
+      $s = $this->db->prepare("
+        select
            user.id as userId, task.id, task.title, task.body, user_task.progress, user.firstname, user.surname, user.email, user_task.lastChanged
-       from Task
-       inner join user_task
-       on task.id = user_task.taskId
-       inner join user
-       on user.id = user_task.userId
-       where user_task.progress = :completed
-       order by user_task.lastChanged desc
-     ");
+        from Task
+        inner join user_task
+        on task.id = user_task.taskId
+        inner join user
+        on user.id = user_task.userId
+        where user_task.progress = :completed
+        order by user_task.lastChanged desc
+      ");
      $s->execute(['completed' => "Not Started"]);
    } elseif ($option == "Time") {
+     // This returns the tasks in order of the most recently updated task.
       $s = $this->db->prepare("
         select
             user.id as userId, task.id, task.title, task.body, user_task.progress, user.firstname, user.surname, user.email, user_task.lastChanged
@@ -102,6 +108,7 @@ class TaskManager {
       ");
       $s->execute(['completed' => "Completed"]);
     } elseif ($option == "All") {
+      // Returns all of the tasks not yet completed, split by progression in order of most recently updated.
       $s = $this->db->prepare("
         select
             user.id as userId, task.id, task.title, task.body, user_task.progress, user.firstname, user.surname, user.email, user_task.lastChanged
@@ -115,6 +122,7 @@ class TaskManager {
       ");
       $s->execute(['completed' => "Completed"]);
     }else {
+      // Default return.
       $s = $this->db->prepare("
         select
             user.id as userId, task.id, task.title, task.body, user_task.progress, user.firstname, user.surname, user.email, user_task.lastChanged
@@ -141,6 +149,7 @@ class TaskManager {
     return $tasks;
   }
 
+  // Returns a list of all of the completed tasks.
   public function allCompleted(){
     $tasks = [];
     $s = $this->db->prepare("
@@ -168,6 +177,7 @@ class TaskManager {
     return $tasks;
   }
 
+  // Returns the tasks that are associated to a userId.
   public function byUserId($id, $completed=false){
     $tasks = [];
     if ($completed) {
@@ -201,6 +211,7 @@ class TaskManager {
     return $tasks;
   }
 
+  // Updating the progress of a task for a given user.
   public function updateProgress($userId, $taskId, $progress){
     $this->db->beginTransaction();
     $r = $this->db->prepare("
@@ -219,6 +230,7 @@ class TaskManager {
     return true;
   }
 
+  // Updates the content of an already existing task.
   public function updateContent(Task $task){
     $this->db->beginTransaction();
     $r = $this->db->prepare("
@@ -238,6 +250,7 @@ class TaskManager {
     return true;
   }
 
+  // The time will be updated with each transaction with the task id.
   public function updateTime($taskId){
     $this->db->beginTransaction();
     $r = $this->db->prepare("
@@ -254,6 +267,7 @@ class TaskManager {
     return true;
   }
 
+  // Task Deletion.
   public function deleteTask($taskId){
     $this->db->beginTransaction();
     $r = $this->db->prepare("
@@ -268,6 +282,7 @@ class TaskManager {
     return true;
   }
 
+  // remove associoation of task and user.
   public function deleteUserTask($taskId){
     $this->db->beginTransaction();
     $r = $this->db->prepare("
@@ -283,6 +298,7 @@ class TaskManager {
     return true;
   }
 
+  // Remove a single user from a task.
   public function removeUserFromTask($userId, $taskId){
     $this->db->beginTransaction();
     $r = $this->db->prepare("
@@ -299,6 +315,7 @@ class TaskManager {
     return true;
   }
 
+  // Returns how many users are assigned to complete a task.
   public function howManyAssigned($id){
     $s = $this->db->prepare("
       select
